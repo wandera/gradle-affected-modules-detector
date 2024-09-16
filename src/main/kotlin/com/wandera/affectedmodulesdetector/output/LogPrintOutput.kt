@@ -14,7 +14,6 @@ object LogPrintOutput {
             
         ------------------ INPUT ------------------
         Base branch: ${attrs.baseBranch}
-        Output file type: ${attrs.outputFileType}
         ------------------ INPUT ------------------
         """.trimIndent()
         )

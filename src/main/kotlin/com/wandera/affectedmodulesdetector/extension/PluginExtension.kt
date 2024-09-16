@@ -8,5 +8,4 @@ package com.wandera.affectedmodulesdetector.extension
  */
 open class PluginExtension(
     var baseBranch: String = "master",
-    var outputFileType: String = "csv",
 )

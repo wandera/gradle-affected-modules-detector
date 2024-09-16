@@ -2,7 +2,7 @@ package com.wandera.affectedmodulesdetector.task
 
 import com.wandera.affectedmodulesdetector.graph.Graph
 import com.wandera.affectedmodulesdetector.graph.Node
-import com.wandera.affectedmodulesdetector.output.FileOutput
+import com.wandera.affectedmodulesdetector.output.FileOutputWriter
 import com.wandera.affectedmodulesdetector.output.LogPrintOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ProjectLayout
@@ -30,7 +30,7 @@ abstract class FindAffectedModulesTask : DefaultTask() {
 
         val affectedModules: Set<Node> =
             FindAffectedModulesTaskHelper(graph).getAffectedModules(attrs.baseBranch)
-        FileOutput.writeToCsv(buildPath(), affectedModules)
+        FileOutputWriter.writeAffectedModulesIntoFile(buildPath(), affectedModules)
     }
 
     private fun buildPath() = layout.buildDirectory.asFile.get().path

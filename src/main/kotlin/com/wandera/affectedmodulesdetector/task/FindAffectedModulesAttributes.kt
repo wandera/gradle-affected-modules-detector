@@ -9,7 +9,6 @@ import com.wandera.affectedmodulesdetector.extension.PluginExtension
  */
 data class FindAffectedModulesAttributes(
     val baseBranch: String,
-    val outputFileType: String,
 )
 
 /**
