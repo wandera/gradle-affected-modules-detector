@@ -26,7 +26,7 @@ abstract class FindAffectedModulesTask : DefaultTask() {
 
     @TaskAction
     fun findAffectedModules() {
-        LogPrintOutput.printTaskInput(attrs)
+        LogPrintOutput.printTaskInput("Base branch: ${attrs.baseBranch}")
 
         val affectedModules: Set<Node> =
             FindAffectedModulesTaskHelper(graph).getAffectedModules(attrs.baseBranch)

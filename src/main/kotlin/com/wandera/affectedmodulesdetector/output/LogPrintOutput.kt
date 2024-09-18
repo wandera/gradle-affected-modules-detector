@@ -8,31 +8,32 @@ import com.wandera.affectedmodulesdetector.task.FindAffectedModulesAttributes
  */
 object LogPrintOutput {
 
-    fun printTaskInput(attrs: FindAffectedModulesAttributes) {
-        println(
-        """
-            
-        ------------------ INPUT ------------------
-        Base branch: ${attrs.baseBranch}
-        ------------------ INPUT ------------------
-        """.trimIndent()
-        )
+    /**
+     * Prints input of the task into console.
+     *
+     * @param inputText Input text.
+     */
+    fun printTaskInput(inputText: String) {
+        printSection("INPUT", inputText)
     }
 
-    fun printTaskOutput(changedModules: Set<Node>, affectedModules: Set<Node>) {
+    /**
+     * Prints output of the task into console.
+     *
+     * @param outputText Output text.
+     */
+    fun printTaskOutput(outputText: String) {
+        printSection("OUTPUT", outputText)
+    }
+
+    private fun printSection(title: String, content: String) {
         println(
         """
         
-        ------------------ OUTPUT ------------------
-        Changed modules: ${changedModules.toPrintableText()}
-        
-        Affected modules: ${affectedModules.toPrintableText()}
-        ------------------ OUTPUT ------------------
+        ------------------ $title ------------------
+        $content
+        ------------------ $title ------------------
         """.trimIndent()
         )
-    }
-
-    fun Set<Node>.toPrintableText(): String = map { it.name }.toString().let {
-        it.substring(1, it.length - 1)
     }
 }

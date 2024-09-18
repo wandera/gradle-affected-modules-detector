@@ -5,6 +5,7 @@ import com.wandera.affectedmodulesdetector.graph.Graph
 import com.wandera.affectedmodulesdetector.graph.GraphFinder
 import com.wandera.affectedmodulesdetector.graph.Node
 import com.wandera.affectedmodulesdetector.output.LogPrintOutput
+import com.wandera.affectedmodulesdetector.output.toPrintableText
 
 /**
  * Helper class for [FindAffectedModulesTask] using only internal API.
@@ -28,7 +29,7 @@ class FindAffectedModulesTaskHelper(
         // Modules that contain code changes and modules that depend on them
         val affectedModules = graphFinder.findDependentNodes(changedModules)
 
-        LogPrintOutput.printTaskOutput(changedModules, affectedModules)
+        LogPrintOutput.printTaskOutput(createOutputText(changedModules, affectedModules))
 
         return affectedModules
     }
@@ -44,4 +45,11 @@ class FindAffectedModulesTaskHelper(
                 graph.nodes.find { node -> node.name == it }
             }
             .toSet()
+
+    private fun createOutputText(changedModules: Set<Node>, affectedNModules: Set<Node>): String =
+        """
+        Changed modules: ${changedModules.toPrintableText()}
+        
+        Affected modules: ${affectedNModules.toPrintableText()}
+        """
 }
