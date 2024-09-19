@@ -24,27 +24,36 @@ class FindAffectedModulesTaskHelper(
      * @return Set of affected modules.
      */
     fun getAffectedModules(baseBranch: String): Set<Node> {
-        // Modules that contain code changes
-        val changedModules = getChangedModules(baseBranch)
+        // Modules that contain code changes or all modules
+        val baseAffectedModules = getBaseAffectedModules(baseBranch)
         // Modules that contain code changes and modules that depend on them
-        val affectedModules = graphFinder.findDependentNodes(changedModules)
+        val affectedModules = graphFinder.findDependentNodes(baseAffectedModules)
 
-        LogPrintOutput.printTaskOutput(createOutputText(changedModules, affectedModules))
+        LogPrintOutput.printTaskOutput(createOutputText(baseAffectedModules, affectedModules))
 
         return affectedModules
     }
 
-    private fun getChangedModules(comparedBranch: String): Set<Node> =
-        GitCommandExecutor.retrieveGitDiff(comparedBranch)
-            .map {
-                // Extract first part of the path that is usually the module name
-                it.split("/")[0].trim()
-            }
-            .mapNotNull {
-                // Filter all changed files outside of modules
-                graph.nodes.find { node -> node.name == it }
-            }
-            .toSet()
+    private fun getBaseAffectedModules(comparedBranch: String): Set<Node> {
+        // Map directories to modules, if directoryName is not a module name,
+        // it is converted to null
+        val parsedModules = getChangedDirectoryNames(comparedBranch)
+            .map { graph.nodes.find { node -> node.name == it } }
+
+        return if (parsedModules.contains(null)) {
+            // If there are changed directories that are not module names,
+            // all modules are considered affected
+            graph.nodes
+        } else {
+            parsedModules.filterNotNull().toSet()
+        }
+    }
+
+    private fun getChangedDirectoryNames(comparedBranch: String): List<String> {
+        val changeFilePaths = GitCommandExecutor.retrieveGitDiff(comparedBranch)
+        // Extract first part of the path that is usually the directory name
+        return changeFilePaths.map { it.split("/")[0].trim() }
+    }
 
     private fun createOutputText(changedModules: Set<Node>, affectedNModules: Set<Node>): String =
         """
