@@ -10,36 +10,19 @@ class GraphFinder(
 ) {
 
     /**
-     * Finds all nodes that are dependent on given nodes.
+     * Finds all nodes that are dependent on given nodes. It doesn't support graph with cycles.
      *
      * @param nodes Nodes to find dependent nodes for.
      * @return Input nodes and nodes dependent on them.
      */
-    fun findDependentNodes(nodes: Set<Node>): Set<Node> {
-        val dependentNodes = mutableSetOf(*nodes.toTypedArray())
-        findDependentNodesRecursive(nodes, dependentNodes)
-        return dependentNodes
+    fun findDependentNodes(nodes: Set<Node>): Set<Node> = if (nodes.isEmpty()) {
+        emptySet()
+    } else {
+        val sourceNodes = nodes.flatMap { node: Node-> getSourceNodes(node) }.toSet()
+        nodes + findDependentNodes(sourceNodes)
     }
 
-    private fun findDependentNodesRecursive(
-        nodes: Set<Node>,
-        dependentNodes: MutableSet<Node>,
-    ) {
-        // Source nodes are used for optimization to  avoid searching same node too many times
-        val sourceNodes = mutableSetOf<Node>()
-        val oldDependentNodesSize = dependentNodes.size
-
-        nodes.forEach { node ->
-            graph.edges.forEach { edge ->
-                if (edge.target == node) {
-                    dependentNodes.add(edge.source)
-                    sourceNodes.add(edge.source)
-                }
-            }
-        }
-
-        if (oldDependentNodesSize < dependentNodes.size) {
-            findDependentNodesRecursive(sourceNodes, dependentNodes)
-        }
+    private fun getSourceNodes(node: Node): Set<Node> {
+        return graph.edges.filter { it.target == node }.map { it.source }.toSet()
     }
 }
